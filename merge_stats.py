@@ -26,7 +26,8 @@ if __name__ == "__main__":
             df = pd.read_csv(file)
         else:
             cur = pd.read_csv(file)
-            df = df.append(cur)
+            # df = df.append(cur)
+            df = pd.concat([df, cur])
         c += 1
 
 

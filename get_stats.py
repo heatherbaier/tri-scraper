@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     print(people.shape)
 
-    driver = webdriver.Chrome(executable_path = "/Users/heatherbaier/Desktop/tri_scrape/tri_scrape/chromedriver")
+    driver = webdriver.Chrome()#executable_path = "/Users/heatherbaier/Desktop/tri_scrape/tri_scrape/chromedriver")
 
     url = "https://rankings.usatriathlon.org/RaceResult/AthleteResults"
 
@@ -78,15 +78,16 @@ if __name__ == "__main__":
         ln = row.Name.split(" ")[1]
         print(fn, ln)
 
-        input = driver.find_element_by_id("FirstName")
+        # input = driver.find_element_by_id("FirstName")
+        input = driver.find_element("id", "FirstName")
         input.send_keys(fn)
 
-        input = driver.find_element_by_id("LastName")
+        input = driver.find_element("id", "LastName")
         input.send_keys(ln)
 
         time.sleep(2)
 
-        input = driver.find_element_by_id("btnSearchAthlete")
+        input = driver.find_element("id", "btnSearchAthlete")
         input.click()
 
         time.sleep(5)
@@ -129,7 +130,8 @@ if __name__ == "__main__":
                     
                     # click on the row with the matching age
                     age = row.Age
-                    l = driver.find_element_by_xpath(f"//*[text()='{str(age)}']") 
+                    # l = driver.find_element_by_xpath(f"//*[text()='{str(age)}']") 
+                    l = driver.find_element(By.XPATH, f"//*[text()='{str(age)}']")#.text
                     l.click()
 
                     time.sleep(2)

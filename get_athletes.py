@@ -12,23 +12,23 @@ if __name__ == "__main__":
 
     print(args.url)
 
-    # url = "https://runsignup.com/Race/FindARunner/?raceId=13356&embedId2=mQezHpIT"
-
+    # lazy for loop so don't have to figure out number of pages
     for i in range(0, 100):
 
         print("Page: ", i, end = "\r")
 
-        try:
+        # try:
 
-            if i == 0:
-                url = args.url
-                df = pd.read_html(url)[1]
-            else:
-                url = f"{args.url}&page={i}"   
-                df = pd.concat([df, pd.read_html(url)[1]])
+        if i == 0:
+            url = args.url
+            df = pd.read_html(url)[1]
+        else:
+            url = f"{args.url}&page={i}"   
+            df = pd.concat([df, pd.read_html(url)[1]])
 
-        except:
+        # except:
 
-            break
+        #     break
 
+    df = df.drop_duplicates(subset = ["Name"])
     df.to_csv("./participants.csv", index = False)
