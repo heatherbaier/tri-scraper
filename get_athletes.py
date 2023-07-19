@@ -17,8 +17,6 @@ if __name__ == "__main__":
 
         print("Page: ", i, end = "\r")
 
-        # try:
-
         if i == 0:
             url = args.url
             df = pd.read_html(url)[1]
@@ -26,9 +24,6 @@ if __name__ == "__main__":
             url = f"{args.url}&page={i}"   
             df = pd.concat([df, pd.read_html(url)[1]])
 
-        # except:
-
-        #     break
 
     df = df.drop_duplicates(subset = ["Name"])
     df.to_csv("./participants.csv", index = False)

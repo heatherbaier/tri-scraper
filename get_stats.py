@@ -12,6 +12,8 @@ import argparse
 
 import time
 
+from states import *
+
 
 def find_indices(list_to_check, item_to_find):
     indices = []
@@ -21,26 +23,23 @@ def find_indices(list_to_check, item_to_find):
     return indices
 
 
-def stats_to_table(txt):
+def stats_to_table(txt, fn, ln):
 
-    score_index = txt.index("Score") + 1
-    last_index = txt.index([i for i in txt if "Corporate" in i][0])
+    score_index = txt.index("Youth") + 1
+    last_index = txt.index("+")
 
     txt = txt[score_index:last_index]
-
-    dnf = [i for i in txt if "DNF" in i]
-
-    if len(dnf) != 0:
-        indices = find_indices(txt, "DNF")
-        for i in indices:
-            print(indices)
-            txt = txt[0:i - 2] + txt[i + 1:]
-
-    chunks = [txt[x:x+4] for x in range(0, len(txt), 4)]
+    txt = [i for i in txt if not i.endswith("th")]
+    txt = [i for i in txt if not i.endswith("rd")]
+    txt = [i for i in txt if not i.endswith("2nd")]
+    txt = [i for i in txt if not i.endswith("st")]
+    chunks = [txt[x:x+5] for x in range(0, len(txt), 5)]
 
     df = pd.DataFrame(chunks)
     df["first_name"] = fn
     df["last_name"] = ln
+
+    print(df)
 
     df.to_csv(f"./stats/{ln}_{fn}_stats.csv", index = False)
 
@@ -70,78 +69,105 @@ if __name__ == "__main__":
 
     for col, row in people.iterrows():
 
-        url = "https://rankings.usatriathlon.org/RaceResult/AthleteResults"
-
-        driver.get(url)
-
         fn = row.Name.split(" ")[0]
         ln = row.Name.split(" ")[1]
         print(fn, ln)
 
-        # input = driver.find_element_by_id("FirstName")
-        input = driver.find_element("id", "FirstName")
-        input.send_keys(fn)
+        url = f"https://member.usatriathlon.org/results/athletes?first_name={fn}&last_name={ln}"
 
-        input = driver.find_element("id", "LastName")
-        input.send_keys(ln)
+        driver.get(url)
 
         time.sleep(2)
-
-        input = driver.find_element("id", "btnSearchAthlete")
-        input.click()
-
-        time.sleep(5)
 
         with open("./record.txt", "a") as f:
             f.write("\n" + fn + " " + ln + " ")
 
         txt = driver.find_element(By.XPATH, "/html/body").text
         txt = txt.splitlines()
+        txt = [i.strip() for i in txt] 
+        txt = [i.title() for i in txt]
 
-        # Case 1: No records available
-        no_res = [i for i in txt if i == "No data to display"]
+        name = ", ".join([ln, fn])
+        print(name)
 
-        with open("./record.txt", "a") as f:
-            f.write("No res: " + str(len(no_res)) + " ")
+        c = txt.count(name)
+
+        print("COUNT: ", c)
+
+        if name not in txt:
+            continue
+        else:
+            res = 1
 
         # Case 2: Only one person with name
-        if len(no_res) == 0:
+        if c == 1:
 
-            multiple = [i for i in txt if i == "Choose Athlete"]
+            try:
 
-            with open("./record.txt", "a") as f:
-                f.write("Multiple: " + str(len(multiple)) + " ")
+                l = driver.find_element(By.XPATH, f"//*[text()='{str(ln)}']")#.text
+                l.click()    
 
-            if len(multiple) == 0:
+                time.sleep(2)
 
-                try:
+                txt = driver.find_element(By.XPATH, "/html/body").text
+                txt = txt.splitlines()   
+                txt = [i.strip() for i in txt] 
 
-                    stats_to_table(txt)
+                print(txt, "\n\n")
 
-                except:
+                stats_to_table(txt, fn, ln)
 
-                    with open("./record.txt", "a") as f:
-                        f.write(" Failed! ")
-
-            # Case 3: Multiple people with same name
-            elif len(multiple) != 0:
+            except:
 
                 try:
-                    
-                    # click on the row with the matching age
-                    age = row.Age
-                    # l = driver.find_element_by_xpath(f"//*[text()='{str(age)}']") 
-                    l = driver.find_element(By.XPATH, f"//*[text()='{str(age)}']")#.text
-                    l.click()
+
+                    # MIGHT HAVE FAILED BECAUSE OF GOSH DARN HECKIN CASING SO TRY AGAIN WITH ALL CAPS
+                    l = driver.find_element(By.XPATH, f"//*[text()='{str(ln.upper())}']")#.text
+                    l.click()    
 
                     time.sleep(2)
 
                     txt = driver.find_element(By.XPATH, "/html/body").text
-                    txt = txt.splitlines()
+                    txt = txt.splitlines()   
+                    txt = [i.strip() for i in txt] 
 
-                    stats_to_table(txt)
+                    print(txt, "\n\n")
+
+                    stats_to_table(txt, fn, ln)
+
+                # lol u suck
+                except:
+                    
+                    pass
+
+        # Case 2: Multiple people with name
+        elif c > 1:
+
+            age = int(row.Age)
+            fail = 1
+            for i in [age, age - 1, age + 1]:
+
+                print("AGE: ", age)
+
+                try:
+
+                    l = driver.find_element(By.XPATH, f"//*[text()='{str(i)}yrs']")#.text
+                    l.click()   
+
+                    time.sleep(2)
+
+                    txt = driver.find_element(By.XPATH, "/html/body").text
+                    txt = txt.splitlines()   
+                    txt = [i.strip() for i in txt] 
+
+                    stats_to_table(txt, fn, ln)
+
+                    fail = 0
 
                 except:
 
-                    with open("./record.txt", "a") as f:
-                        f.write(" Failed! ")
+                    fail = 1
+            
+                if fail == 0:
+
+                    continue
