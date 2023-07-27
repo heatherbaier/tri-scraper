@@ -49,19 +49,25 @@ def stats_to_table(txt, fn, ln):
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('race', type = str)
-    parser.add_argument('race_length', type = str)
-    parser.add_argument('gender', type = str)
+    # parser.add_argument('race', type = str)
+    # parser.add_argument('race_length', type = str)
+    # parser.add_argument('gender', type = str)
     args = parser.parse_args()
 
-    print(args.race)
+    # print(args.race)
     
-    people = pd.read_csv("./participants.csv")
-    people = people[people["Event"] == args.race]
-    people = people.drop_duplicates(subset = ["Name"])
-    people.to_csv(f"./{args.race_length}_participants.csv", index = False)
+    # people = pd.read_csv("./participants.csv")
+    # people = people[people["Event"] == args.race]
+    # people = people.drop_duplicates(subset = ["Name"])
+    # people.to_csv(f"./{args.race_length}_participants.csv", index = False)
 
+    people = pd.read_csv("usa_nats.csv")[0:50]
+    people["Name"] = people["Attendee First Name"].str.title() + " " + people["Attendee Last Name"].str.title() + "  More Details"
+    people = people.rename(columns = {"Age as of 12/31/2023": "Age"})
+    print(people.head())    
     print(people.shape)
+
+    people.to_csv('./participants.csv')
 
     driver = webdriver.Chrome()#executable_path = "/Users/heatherbaier/Desktop/tri_scrape/tri_scrape/chromedriver")
 

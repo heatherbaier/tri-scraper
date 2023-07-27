@@ -6,3 +6,5 @@ chromedriver
 stats
 archive
 stats_v1
+stats_v2
+__pycache__
