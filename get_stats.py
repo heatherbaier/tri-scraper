@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # people = people.drop_duplicates(subset = ["Name"])
     # people.to_csv(f"./{args.race_length}_participants.csv", index = False)
 
-    people = pd.read_csv("usa_nats.csv")[0:50]
+    people = pd.read_csv("usa_nats.csv")
     people["Name"] = people["Attendee First Name"].str.title() + " " + people["Attendee Last Name"].str.title() + "  More Details"
     people = people.rename(columns = {"Age as of 12/31/2023": "Age"})
     print(people.head())    
