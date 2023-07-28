@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
 
 
-    df.columns = ["Event", "Date", "Race Length", 'Score', "Time", "FN", "LN"]
+    df.columns = ["Event", "Date", "Race_Length", 'Score', "Time", "FN", "LN"]
     df = df.dropna(how = "any")
 
     df.to_csv("./here.csv", index = False)
@@ -40,12 +40,12 @@ if __name__ == "__main__":
     # df["year"] = df["Date"].str.split(" ").str[-1]
     df["year"] = df["Event"].str[0:5].str.strip()
     df["Race"] = None
-    df["Race"] = np.where(df.Event.str.contains("Intermediate"), "Olympic", df.Race)
-    df["Race"] = np.where(df.Event.str.contains("Short"), "Sprint", df.Race)
-    df["Race"] = np.where(df.Event.str.contains("Olympic"), "Olympic", df.Race)
-    df["Race"] = np.where(df.Event.str.contains("Sprint"), "Sprint", df.Race)
-    df["Race"] = np.where(df.Event.str.contains("Long"), "Half Iron", df.Race)
-    df["Race"] = np.where(df.Event.str.contains("Ironman"), "Half Iron", df.Race)
+    df["Race"] = np.where(df.Race_Length.str.contains("Intermediate"), "Olympic", df.Race)
+    df["Race"] = np.where(df.Race_Length.str.contains("Short"), "Sprint", df.Race)
+    df["Race"] = np.where(df.Race_Length.str.contains("Olympic"), "Olympic", df.Race)
+    df["Race"] = np.where(df.Race_Length.str.contains("Sprint"), "Sprint", df.Race)
+    df["Race"] = np.where(df.Race_Length.str.contains("Long"), "Half Iron", df.Race)
+    df["Race"] = np.where(df.Race_Length.str.contains("Ironman"), "Half Iron", df.Race)
     df["Score"] = pd.to_numeric(df["Score"], errors='coerce')
     df["Name"] = df["FN"] + " " + df["LN"]
     df = df.dropna()
