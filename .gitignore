@@ -8,3 +8,5 @@ archive
 stats_v1
 stats_v2
 __pycache__
+*.csv
+*.xlsx

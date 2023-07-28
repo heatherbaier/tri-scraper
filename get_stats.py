@@ -29,10 +29,16 @@ def stats_to_table(txt, fn, ln):
     last_index = txt.index("+")
 
     txt = txt[score_index:last_index]
-    txt = [i for i in txt if not i.endswith("th")]
-    txt = [i for i in txt if not i.endswith("rd")]
+    txt = [i for i in txt if not i.endswith("3rd")]
     txt = [i for i in txt if not i.endswith("2nd")]
-    txt = [i for i in txt if not i.endswith("st")]
+    txt = [i for i in txt if not i.endswith("1st")]
+    txt = [i for i in txt if not i.endswith("4th")]
+    txt = [i for i in txt if not i.endswith("5th")]
+    txt = [i for i in txt if not i.endswith("6th")]
+    txt = [i for i in txt if not i.endswith("7th")]
+    txt = [i for i in txt if not i.endswith("8th")]
+    txt = [i for i in txt if not i.endswith("9th")]
+    txt = [i for i in txt if not i.endswith("0th")]
     chunks = [txt[x:x+5] for x in range(0, len(txt), 5)]
 
     df = pd.DataFrame(chunks)
