@@ -31,7 +31,10 @@ def stats_to_table(txt, fn, ln):
     txt = txt[score_index:last_index]
     txt = [i for i in txt if not i.endswith("3rd")]
     txt = [i for i in txt if not i.endswith("2nd")]
+    txt = [i for i in txt if not i.endswith("2th")]
+    txt = [i for i in txt if not i.endswith("1th")]
     txt = [i for i in txt if not i.endswith("1st")]
+    txt = [i for i in txt if not i.endswith("3th")]
     txt = [i for i in txt if not i.endswith("4th")]
     txt = [i for i in txt if not i.endswith("5th")]
     txt = [i for i in txt if not i.endswith("6th")]
@@ -70,6 +73,8 @@ if __name__ == "__main__":
     people = pd.read_csv("usa_nats.csv")
     people["Name"] = people["Attendee First Name"].str.title() + " " + people["Attendee Last Name"].str.title() + "  More Details"
     people = people.rename(columns = {"Age as of 12/31/2023": "Age"})
+    print(people.shape)
+    people = people[people["Ticket Type"].str.contains("Olympic")]
     print(people.head())    
     print(people.shape)
 
